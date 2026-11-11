@@ -78,6 +78,19 @@ def test_entity_linked_evidence_outside_time_window_does_not_correlate(tmp_path:
     assert finding["confidence"] != "high"
 
 
+def test_three_source_group_requires_one_combined_fifteen_minute_window(tmp_path: Path) -> None:
+    stretched = [
+        event.model_copy(update={"observed_at_utc": event.observed_at_utc + timedelta(minutes=12)}) if event.event_type == "suspicious_command" else event.model_copy(update={"observed_at_utc": event.observed_at_utc + timedelta(minutes=26)}) if event.event_type == "unusual_transfer" else event
+        for event in events("scenario_correlated_high_risk")
+    ]
+    finding = analyze(stretched, events("baseline"), AuditLedger(tmp_path / "audit.sqlite"), "run-combined-window")[0]
+    assert finding["rule_ids"] == ["AUTH_FAILURE_BURST", "SUSPICIOUS_COMMAND_EXECUTION"]
+    assert finding["technique_ids"] == ["T1059", "T1110"]
+    assert finding["evidence_event_ids"] == ["evt-001", "evt-002", "evt-003", "evt-004"]
+    assert finding["risk_score"] < 100
+    assert "UNUSUAL_OUTBOUND_TRANSFER" not in finding["rule_ids"]
+
+
 def test_anomaly_without_correlated_rule_evidence_is_not_double_counted(tmp_path: Path) -> None:
     findings = analyze(events("scenario_cross_tenant_negative"), events("baseline"), AuditLedger(tmp_path / "audit.sqlite"), "run-anomaly")
     alpha = next(item for item in findings if item["tenant_id"] == "tenant-alpha")

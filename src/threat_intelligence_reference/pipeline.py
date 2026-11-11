@@ -60,6 +60,11 @@ def _within_window(first: RuleEvidence, second: RuleEvidence, by_id: dict[str, T
     return bool(timestamps) and max(timestamps) - min(timestamps) <= CORRELATION_WINDOW
 
 
+def _group_within_window(group: list[RuleEvidence], by_id: dict[str, TelemetryEvent]) -> bool:
+    timestamps = [by_id[event_id].observed_at_utc for rule in group for event_id in rule["evidence_ids"]]
+    return bool(timestamps) and max(timestamps) - min(timestamps) <= CORRELATION_WINDOW
+
+
 def _auth_burst_rules(events: list[TelemetryEvent]) -> list[RuleEvidence]:
     by_principal: dict[str, list[TelemetryEvent]] = defaultdict(list)
     for event in events:
@@ -95,14 +100,16 @@ def _select_evidence_group(rules: list[RuleEvidence], by_id: dict[str, Telemetry
     auth_rules = [rule for rule in rules if rule["source"] == "identity"]
     network_rules = [rule for rule in rules if rule["source"] == "network"]
     for endpoint in (rule for rule in rules if rule["source"] == "endpoint"):
-        group = [endpoint]
         auth = next((rule for rule in auth_rules if rule["principal_ref"] == endpoint["principal_ref"] and _within_window(rule, endpoint, by_id)), None)
         network = next((rule for rule in network_rules if rule["host_ref"] == endpoint["host_ref"] and _within_window(rule, endpoint, by_id)), None)
         if auth is not None:
-            group.append(auth)
+            candidates.append([endpoint, auth])
         if network is not None:
-            group.append(network)
-        candidates.append(group)
+            candidates.append([endpoint, network])
+        if auth is not None and network is not None:
+            combined = [endpoint, auth, network]
+            if _group_within_window(combined, by_id):
+                candidates.append(combined)
     return sorted(candidates, key=lambda group: (-len({rule["source"] for rule in group}), -max(rule["severity"] for rule in group), -len({rule["rule_id"] for rule in group}), tuple(sorted(event_id for rule in group for event_id in rule["evidence_ids"])) ))[0]
 
 
