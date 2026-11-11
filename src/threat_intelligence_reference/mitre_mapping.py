@@ -1,0 +1,9 @@
+from __future__ import annotations
+
+ATTACK_VERSION = "ATT&CK-v20.1"
+MAPPING_VERSION = "mitre-mapping-v1"
+RULE_MAPPINGS = {
+    "AUTH_FAILURE_BURST": "T1110",
+    "SUSPICIOUS_COMMAND_EXECUTION": "T1059",
+    "UNUSUAL_OUTBOUND_TRANSFER": "T1041",
+}

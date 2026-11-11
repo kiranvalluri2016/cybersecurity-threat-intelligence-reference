@@ -1,0 +1,5 @@
+[
+  {"event_id":"base-001","tenant_id":"tenant-alpha","observed_at_utc":"2026-11-11T09:00:00Z","source_type":"identity","event_type":"auth_success","principal_ref":"principal-alpha","host_ref":"host-alpha","payload":{"failed_count":0},"schema_version":"telemetry-v1"},
+  {"event_id":"base-002","tenant_id":"tenant-alpha","observed_at_utc":"2026-11-11T09:01:00Z","source_type":"endpoint","event_type":"normal_process","principal_ref":"principal-alpha","host_ref":"host-alpha","payload":{"rarity_score":0.1},"schema_version":"telemetry-v1"},
+  {"event_id":"base-003","tenant_id":"tenant-alpha","observed_at_utc":"2026-11-11T09:02:00Z","source_type":"network","event_type":"normal_transfer","principal_ref":"principal-alpha","host_ref":"host-alpha","payload":{"outbound_bytes":10},"schema_version":"telemetry-v1"}
+]

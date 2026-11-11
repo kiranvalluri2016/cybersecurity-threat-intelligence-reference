@@ -1,0 +1,7 @@
+[
+  {"event_id":"evt-001","tenant_id":"tenant-alpha","observed_at_utc":"2026-11-11T10:00:00Z","source_type":"identity","event_type":"auth_failure","principal_ref":"principal-alpha","host_ref":"host-alpha","payload":{"failed_count":1},"schema_version":"telemetry-v1"},
+  {"event_id":"evt-002","tenant_id":"tenant-alpha","observed_at_utc":"2026-11-11T10:01:00Z","source_type":"identity","event_type":"auth_failure","principal_ref":"principal-alpha","host_ref":"host-alpha","payload":{"failed_count":1},"schema_version":"telemetry-v1"},
+  {"event_id":"evt-003","tenant_id":"tenant-alpha","observed_at_utc":"2026-11-11T10:02:00Z","source_type":"identity","event_type":"auth_failure","principal_ref":"principal-alpha","host_ref":"host-alpha","payload":{"failed_count":1},"schema_version":"telemetry-v1"},
+  {"event_id":"evt-004","tenant_id":"tenant-alpha","observed_at_utc":"2026-11-11T10:03:00Z","source_type":"endpoint","event_type":"suspicious_command","principal_ref":"principal-alpha","host_ref":"host-alpha","payload":{"rarity_score":0.95},"schema_version":"telemetry-v1"},
+  {"event_id":"evt-005","tenant_id":"tenant-alpha","observed_at_utc":"2026-11-11T10:04:00Z","source_type":"network","event_type":"unusual_transfer","principal_ref":"principal-alpha","host_ref":"host-alpha","payload":{"outbound_bytes":5000},"schema_version":"telemetry-v1"}
+]

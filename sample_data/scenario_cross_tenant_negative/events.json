@@ -1,0 +1,4 @@
+[
+  {"event_id":"evt-a1","tenant_id":"tenant-alpha","observed_at_utc":"2026-11-11T10:00:00Z","source_type":"endpoint","event_type":"suspicious_command","principal_ref":"principal-shared","host_ref":"host-shared","payload":{"rarity_score":0.95},"schema_version":"telemetry-v1"},
+  {"event_id":"evt-b1","tenant_id":"tenant-beta","observed_at_utc":"2026-11-11T10:01:00Z","source_type":"network","event_type":"unusual_transfer","principal_ref":"principal-shared","host_ref":"host-shared","payload":{"outbound_bytes":5000},"schema_version":"telemetry-v1"}
+]
