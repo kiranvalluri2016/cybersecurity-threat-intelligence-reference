@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Literal
 
@@ -33,9 +34,17 @@ class TelemetryEvent(BaseModel):
         return hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
-TRUSTED_CALLERS = {"analyst-alpha": "tenant-alpha", "analyst-beta": "tenant-beta"}
+@dataclass(frozen=True)
+class TrustedExecutionContext:
+    """A source-bound local stand-in for an independently authenticated caller."""
+
+    subject: str
+    tenant_id: str
 
 
-def authorize(caller: str, tenant_id: str) -> None:
-    if TRUSTED_CALLERS.get(caller) != tenant_id:
-        raise PermissionError("trusted caller is not authorized for the requested tenant")
+LOCAL_EXECUTION_CONTEXT = TrustedExecutionContext(subject="local-analyst-alpha", tenant_id="tenant-alpha")
+
+
+def authorize(tenant_id: str, context: TrustedExecutionContext = LOCAL_EXECUTION_CONTEXT) -> None:
+    if context.tenant_id != tenant_id:
+        raise PermissionError("trusted execution context is not authorized for the requested tenant")

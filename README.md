@@ -26,25 +26,21 @@ python3.12 -m venv .venv
 PYTHON_COMMAND=.venv/bin/python ./scripts/validate-local.sh
 
 .venv/bin/threat-intel analyze \
-  --caller analyst-alpha \
   --tenant tenant-alpha \
   --input sample_data/scenario_correlated_high_risk/events.json \
   --baseline sample_data/baseline/events.json \
   --state /tmp/threat-intel-reference.sqlite
 
 .venv/bin/threat-intel validate-fixtures \
-  --caller analyst-alpha \
   --tenant tenant-alpha \
   --input sample_data/scenario_correlated_high_risk/events.json \
   --baseline sample_data/baseline/events.json
 
 .venv/bin/threat-intel inspect \
-  --caller analyst-alpha \
   --tenant tenant-alpha \
   --state /tmp/threat-intel-reference.sqlite
 
 .venv/bin/threat-intel explain-finding \
-  --caller analyst-alpha \
   --tenant tenant-alpha \
   --finding-id '<persisted-finding-id>' \
   --state /tmp/threat-intel-reference.sqlite
@@ -52,7 +48,9 @@ PYTHON_COMMAND=.venv/bin/python ./scripts/validate-local.sh
 
 The deterministic `scenario_correlated_high_risk` fixture contains an identity failed-auth burst, a related endpoint command and a related network transfer for `tenant-alpha`; it yields one advisory critical finding. `scenario_cross_tenant_negative` deliberately reuses opaque entity strings across tenants and must not correlate them. Run the complete local suite with `.venv/bin/python -m pytest -q`.
 
-`validate-fixtures` performs typed, collision, baseline-presence and tenant-scope checks without creating a state database. `explain-finding` reads only a persisted finding from the caller's authorized tenant and returns its bounded scoring basis; it never returns raw telemetry or entity references.
+`validate-fixtures` performs typed, collision, baseline-presence and tenant-scope checks without creating a state database. `explain-finding` reads only a persisted finding from the source-bound execution context's authorized tenant and returns its bounded scoring basis; it never returns raw telemetry or entity references.
+
+For local V1, every CLI process runs under the source-bound `local-analyst-alpha` synthetic execution context. There is intentionally no caller or analyst selector argument: user-provided CLI text cannot switch tenant identity. A real authentication boundary is outside this reference POC.
 
 ## Boundaries
 
